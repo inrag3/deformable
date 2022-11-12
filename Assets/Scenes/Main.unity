@@ -142,8 +142,8 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!64 &333902544
-MeshCollider:
+--- !u!65 &333902544
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -152,10 +152,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+  serializedVersion: 2
+  m_Size: {x: 10, y: 2.220446e-16, z: 10}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &333902545
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -505,9 +504,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb7b0ba4070a19c4c9206e35355849ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _minimumImpulse: 2
-  _malleability: 0.05
-  _radius: 0.3
 --- !u!54 &1688247313
 Rigidbody:
   m_ObjectHideFlags: 0
