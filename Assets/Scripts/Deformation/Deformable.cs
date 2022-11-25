@@ -3,13 +3,10 @@ using UnityEngine;
 
 namespace Deformation
 {
-	[RequireComponent(typeof(Mesh), typeof(MeshCollider), typeof(Rigidbody))]
+	[RequireComponent(typeof(MeshFilter), typeof(MeshCollider))]
 	public class Deformable : MonoBehaviour, IDeformable
 	{
-		
-		private Vector3[] _vertices;
-		private Vector3[] _startVertices;
-
+		private MeshVertices _vertices;
 		public MeshVertices InitialVertices { get; private set; }
 		public MeshFilter Filter { get; private set; }
 		public MeshCollider Collider { get; private set; }
@@ -18,11 +15,15 @@ namespace Deformation
 
 		private void Awake()
 		{
-			Collider = GetComponent<MeshCollider>();
 			Filter = GetComponent<MeshFilter>();
+			Collider = GetComponent<MeshCollider>();
+			//TODO вынести возможно куда-то это
+			// Filter.sharedMesh = Instantiate(Filter.mesh);
+			// Collider.sharedMesh = Filter.sharedMesh;
 			InitialVertices = new MeshVertices(Filter.mesh.vertices);
 		}
 
+		
 		private void OnCollisionEnter(Collision collision)
 		{
 			Entered?.Invoke(collision, this);

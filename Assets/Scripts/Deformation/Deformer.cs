@@ -6,17 +6,30 @@ using UnityEngine;
 
 namespace Deformation
 {
+    [DisallowMultipleComponent]
     public class Deformer : MonoBehaviour
     {
-        [SerializeField] [Min(2)] private float _minimumImpulse;
-        [SerializeField] [Min(0.05f)] private float _malleability;
-        [SerializeField] [Min(0)] private float _radius = 0.1f;
+        [Header("Impulse")]
+        [SerializeField] [Min(0.5f)] private float _impulseThreshold;
+
+        [SerializeField] [Min(1f)] private float _impulseMultiplier;
+
+        private float _impulse;
+
+        [Header("Radius")]
+        [SerializeField] [Min(0f)] private float _radiusMultiplier = 0.2f;
+        private float _radius;
+
+        [Header("Softness")]
+        [SerializeField] [Min(1f)] private float _softness;
+
         private IEnumerable<IDeformable> _deformables = Enumerable.Empty<IDeformable>();
-        private Vector3[] _vertices;
+
 
         private void Awake()
         {
             _deformables = GetComponentsInChildren<IDeformable>();
+            
         }
 
         private void OnEnable()
@@ -34,26 +47,30 @@ namespace Deformation
                 deformable.Entered -= OnEntered;
             }
         }
-
+        
         private void OnEntered(Collision collision, IDeformable deformable)
         {
-            var contact = collision.GetContact(0);
-            var point = transform.InverseTransformPoint(contact.point);
-            var normal = transform.InverseTransformDirection(contact.normal);
-            var impulse = collision.impulse.magnitude;
-            if (impulse < _minimumImpulse)
+            if (collision.relativeVelocity.magnitude < _impulseThreshold)
                 return;
-            
-            _vertices = deformable.Filter.mesh.vertices;
-            for (var i = 0; i < _vertices.Length; i++)
+            var contact = collision.GetContact(0);
+            _radius = collision.transform.localScale.magnitude / 4;
+            _radius *= _radiusMultiplier;
+            var vertices = deformable.Filter.mesh.vertices;
+            for (var i = 0; i < vertices.Length; i++)
             {
-                var scale = Mathf.Clamp(_radius - (point - _vertices[i]).magnitude, 0, _radius);
-                _vertices[i] += normal * impulse * scale * _malleability;
+                var vertex = vertices[i];
+                var point = transform.TransformPoint(vertex);
+                var distance = Vector3.Distance(contact.point, point);
+                if (!(distance < _radius)) continue;
+                var direction = collision.relativeVelocity;
+                distance = _radius - distance;
+                if (_softness > 1.0f)
+                    distance = Mathf.Pow(distance, _softness);
+                point += direction.normalized * (_impulse * distance);
+                vertices[i] = transform.InverseTransformPoint(point);
             }
-
-            var mesh = deformable.Filter.mesh;
-            mesh.vertices = _vertices;
-            deformable.Collider.sharedMesh = mesh;
+            deformable.Filter.mesh.MarkDynamic();
+            deformable.Filter.mesh.SetVertices(vertices);
             deformable.Filter.mesh.RecalculateNormals();
             deformable.Filter.mesh.RecalculateBounds();
         }
