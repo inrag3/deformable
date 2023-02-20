@@ -1,7 +1,10 @@
 using System;
 using UnityEngine;
 
-public interface IDetector
+namespace Detector
 {
-    public event Action<Collision> Detected;
+    public interface IDetector
+    {
+        public event Action<Collision> Detected;
+    }
 }

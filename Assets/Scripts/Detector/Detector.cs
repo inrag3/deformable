@@ -1,14 +1,17 @@
 using System;
 using UnityEngine;
 
-[DisallowMultipleComponent]
-[RequireComponent(typeof(MeshCollider))]
-public class Detector : MonoBehaviour, IDetector
+namespace Detector
 {
-    public event Action<Collision> Detected;
-
-    private void OnCollisionEnter(Collision collision)
+    [DisallowMultipleComponent]
+    [RequireComponent(typeof(MeshCollider))]
+    public class Detector : MonoBehaviour, IDetector
     {
-        Detected?.Invoke(collision);
+        public event Action<Collision> Detected;
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            Detected?.Invoke(collision);
+        }
     }
 }
