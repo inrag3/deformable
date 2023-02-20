@@ -9,13 +9,13 @@ namespace Deformation
     [DisallowMultipleComponent]
     public class Deformable : MonoBehaviour, IDeformable
     {
-        private IDetector _detector;
+        private IDetector<Collision> _detector;
         private MeshVertices _vertices;
         public MeshVertices InitialVertices { get; private set; }
         public MeshFilter Filter { get; private set; }
         public MeshCollider Collider { get; private set; }
-        public event Action<Collision, IDeformable> Entered;
 
+        public event Action<Collision> Entered;
 
         private void Awake()
         {
@@ -26,6 +26,20 @@ namespace Deformation
             Collider.sharedMesh = Filter.sharedMesh;
             InitialVertices = new MeshVertices(Filter.mesh.vertices);
         }
+
+        private void OnEnable()
+        {
+            _detector.Detected += OnDetected;
+        }
+
+        private void OnDetected(Collision collision) =>
+            Entered?.Invoke(collision);
+
+        private void OnDisable()
+        {
+            _detector.Detected -= OnDetected;
+        }
+        
     }
 }
 

@@ -5,7 +5,7 @@ namespace Deformation
 {
     public interface IDeformable
     {
-        public event Action<Collision, IDeformable> Entered;
+        public event Action<Collision> Entered;
         public MeshVertices InitialVertices { get; }
         public MeshFilter Filter { get; }
         public MeshCollider Collider { get; }

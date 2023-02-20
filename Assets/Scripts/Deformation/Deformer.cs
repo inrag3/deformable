@@ -11,9 +11,6 @@ namespace Deformation
     {
         [Header("Impulse")]
         [SerializeField] [Min(0.5f)] private float _impulseThreshold;
-
-        [SerializeField] [Min(1f)] private float _impulseMultiplier;
-
         private float _impulse;
 
         [Header("Radius")]
@@ -48,7 +45,7 @@ namespace Deformation
             }
         }
         
-        private void OnEntered(Collision collision, IDeformable deformable)
+        private void OnEntered(Collision collision)
         {
             if (collision.relativeVelocity.magnitude < _impulseThreshold)
                 return;

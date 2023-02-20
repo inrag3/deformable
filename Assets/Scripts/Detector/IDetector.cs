@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace Detector
 {
-    public interface IDetector
+    public interface IDetector<out T>
     {
-        public event Action<Collision> Detected;
+        public event Action<T> Detected;
     }
 }
