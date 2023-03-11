@@ -39,7 +39,6 @@ namespace Deformation
         {
             _detector.Detected -= OnDetected;
         }
-        
     }
 }
 
