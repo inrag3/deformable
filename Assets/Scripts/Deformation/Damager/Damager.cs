@@ -30,7 +30,7 @@ public class Damager : MonoBehaviour
                 distance = (point - vertices[i]).magnitude;
                 if (distance <= _radius)
                 {
-                    // Уменьшаем урон мере уменьшения расстояния от точки столкновения
+                    // Уменьшаем урон мере увеличения расстояния от точки столкновения
                     impulse *= Mathf.Clamp01(distance / _radius);
                 }
             }
