@@ -19,6 +19,7 @@ namespace Deformation
 
         private void Awake()
         {
+            _detector = GetComponent<IDetector<Collision>>();
             Filter = GetComponent<MeshFilter>();
             Collider = GetComponent<MeshCollider>();
             //TODO вынести возможно куда-то это
