@@ -17,8 +17,9 @@ namespace Deformation
         
         private IEnumerable<IDeformable> _deformables = Enumerable.Empty<IDeformable>();
         private Damager _damager;
+        // TODO сделать удобную API для взаимодейтсвия с Repairer'ом.
         // private Repairer _repairer;
-        
+        //TODO сделать Applier для применения рассчетов Damager, возможно туда его и поместить
         
         private void Awake()
         {
