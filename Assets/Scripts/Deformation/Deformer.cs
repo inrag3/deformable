@@ -11,21 +11,23 @@ namespace Deformation
     public class Deformer : MonoBehaviour
     {
         //TODO возможно стоит перейти на ScriptalbeObject в плане настроек
-        [SerializeField] [Min(0f)] private float _multiplier = 1f;
         [SerializeField] [Range(0, 1)] private float _impulseMaximumThreshold = 1f;
         [SerializeField] [Min(0.1f)] private float _impulseMinimumThreshold = 0.1f;
-        
-        private IEnumerable<IDeformable> _deformables = Enumerable.Empty<IDeformable>();
+
+        private IList<IDeformable> _deformables = Array.Empty<IDeformable>();
         private Damager _damager;
+
+        private Updater _updater;
         // TODO сделать удобную API для взаимодейтсвия с Repairer'ом.
         // private Repairer _repairer;
         //TODO сделать Applier для применения рассчетов Damager, возможно туда его и поместить
-        
+
         private void Awake()
         {
             _damager = GetComponent<Damager>();
             _deformables = GetComponentsInChildren<IDeformable>();
-            _damager.Init(_deformables);
+            _damager.Initialize(_deformables);
+            //_updater.Initialize(_deformables);
             //TODO сделать обработку, если нет ниодного deforamble
         }
 
@@ -34,14 +36,6 @@ namespace Deformation
             foreach (var deformable in _deformables)
             {
                 deformable.Entered += OnEntered;
-            }
-        }
-
-        private void OnDisable()
-        {
-            foreach (var deformable in _deformables)
-            {
-                deformable.Entered -= OnEntered;
             }
         }
 
@@ -54,5 +48,21 @@ namespace Deformation
             var contact = collision.GetContact(0);
             _damager.Change(contact, impulse);
         }
+
+        private void OnDisable()
+        {
+            foreach (var deformable in _deformables)
+            {
+                deformable.Entered -= OnEntered;
+            }
+        }
+        
+        
+        
+        
+        
+        
+        
+        
     }
 }

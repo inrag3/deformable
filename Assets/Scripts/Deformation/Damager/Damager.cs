@@ -1,40 +1,61 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Deformation;
-using JetBrains.Annotations;
 using UnityEngine;
 
-public class Damager : MonoBehaviour
+public class Damager : MonoBehaviour, IInitializable<IList<IDeformable>>
 {
     [SerializeField] [Min(1f)] private float _radius = 1f;
-    private IEnumerable<IDeformable> _deformables;
+    [SerializeField] [Min(0f)] private float _multiplier = 1f;
+    private IList<IDeformable> _deformables;
+    private Transform _direction;
 
-    public void Init(IEnumerable<IDeformable> deformables)
+    private void Awake()
+    {
+        _direction = new GameObject("Direction").transform;
+        _direction.SetParent(transform, false);
+    }
+    
+    public void Initialize(IList<IDeformable> deformables)
     {
         _deformables = deformables;
     }
-
+    
     public void Change(ContactPoint contact, float impulse)
     {
+        Vector3[] vertices = Array.Empty<Vector3>();
         foreach (var deformable in _deformables)
         {
-            var vertices = deformable.Filter.mesh.vertices;
+            vertices = deformable.Filter.mesh.vertices;
+            var filter = deformable.Filter;
             var distance = Vector3.Distance(Closest(contact, vertices), contact.point);
-
+            _direction.rotation = Quaternion.FromToRotation(Vector3.forward, contact.normal);
             if (!(distance <= _radius))
                 continue;
-            var point = transform.InverseTransformPoint(contact.point);
+            var point = filter.transform.InverseTransformPoint(contact.point);
             for (var i = 0; i < vertices.Length; i++)
             {
                 distance = (point - vertices[i]).magnitude;
                 if (distance <= _radius)
                 {
                     // Уменьшаем урон мере увеличения расстояния от точки столкновения
-                    impulse *= Mathf.Clamp01(distance / _radius);
+                    impulse -= impulse * Mathf.Clamp01(distance / _radius);
+                    
+                    
+                    _direction.position = filter.transform.TransformPoint(vertices[i]) +
+                                          _direction.forward * impulse * (_multiplier / 10f);
+                    
+                    
+                    vertices[i] = filter.transform.InverseTransformPoint(_direction.position);
+                    //TODO посчитать общий дамаг.
                 }
             }
+            filter.mesh.SetVertices(vertices);
+            filter.mesh.MarkDynamic();
+            filter.mesh.RecalculateBounds();
+            filter.mesh.RecalculateNormals();
         }
+        
     }
 
     private Vector3 Closest(ContactPoint contact, IReadOnlyList<Vector3> vertices)

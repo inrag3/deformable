@@ -15,4 +15,9 @@ public class Repairer : MonoBehaviour, IChanger
     {
         throw new System.NotImplementedException();
     }
+
+    public void Initialize(IEnumerable<IDeformable> value)
+    {
+        throw new System.NotImplementedException();
+    }
 }
