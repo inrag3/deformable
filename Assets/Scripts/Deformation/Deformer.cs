@@ -15,8 +15,10 @@ namespace Deformation
         private Damager _damager;
 
         private Updater _updater;
+        
         // TODO сделать удобную API для взаимодейтсвия с Repairer'ом.
         // private Repairer _repairer;
+        
         //TODO сделать Applier для применения рассчетов Damager, возможно туда его и поместить
 
         private void Awake()

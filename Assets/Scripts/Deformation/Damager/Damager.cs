@@ -7,8 +7,7 @@ using UnityEngine;
 public class Damager : MonoBehaviour, IInitializable<IList<IDeformable>, IDamagerSettings>
 {
     private IList<IDeformable> _deformables;
-    private Transform _direction;
-    private IList<IDeformable> _deformables1;
+    private Transform _direction; 
     private IDamagerSettings _settings;
 
     private void Awake()
@@ -20,7 +19,7 @@ public class Damager : MonoBehaviour, IInitializable<IList<IDeformable>, IDamage
     public void Initialize(IList<IDeformable> deformables, IDamagerSettings settings)
     {
         _settings = settings;
-        _deformables1 = deformables;
+        _deformables = deformables;
     }
     
     public void Change(ContactPoint contact, float impulse)
@@ -49,7 +48,6 @@ public class Damager : MonoBehaviour, IInitializable<IList<IDeformable>, IDamage
                     vertices[i] = filter.transform.InverseTransformPoint(_direction.position);
                 }
             }
-
             filter.mesh.SetVertices(vertices);
             filter.mesh.MarkDynamic();
             filter.mesh.RecalculateBounds();
