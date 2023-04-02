@@ -10,10 +10,7 @@ namespace Deformation
     [DisallowMultipleComponent]
     public class Deformer : MonoBehaviour
     {
-        //TODO возможно стоит перейти на ScriptalbeObject в плане настроек
-        [SerializeField] [Range(0, 1)] private float _impulseMaximumThreshold = 1f;
-        [SerializeField] [Min(0.1f)] private float _impulseMinimumThreshold = 0.1f;
-
+        [SerializeField] private Settings.Settings _settings;
         private IList<IDeformable> _deformables = Array.Empty<IDeformable>();
         private Damager _damager;
 
@@ -26,7 +23,7 @@ namespace Deformation
         {
             _damager = GetComponent<Damager>();
             _deformables = GetComponentsInChildren<IDeformable>();
-            _damager.Initialize(_deformables);
+            _damager.Initialize(_deformables, _settings);
             //_updater.Initialize(_deformables);
             //TODO сделать обработку, если нет ниодного deforamble
         }
@@ -43,7 +40,7 @@ namespace Deformation
         {
             var impulse = collision.impulse.magnitude;
             impulse = Mathf.Clamp(impulse, 0f, 10f);
-            if (impulse < _impulseMinimumThreshold)
+            if (impulse < _settings.ImpulseMinimumThreshold)
                 return;
             var contact = collision.GetContact(0);
             _damager.Change(contact, impulse);
@@ -56,13 +53,5 @@ namespace Deformation
                 deformable.Entered -= OnEntered;
             }
         }
-        
-        
-        
-        
-        
-        
-        
-        
     }
 }
