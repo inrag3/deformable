@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b745b7085c741628ebdcffa9f7762c5, type: 3}
   m_Name: Settings
   m_EditorClassIdentifier: 
-  _impulseMaximumThreshold: 1
-  _impulseMinimumThreshold: 0.1
+  _impulseMaximumThreshold: 10
+  _impulseMinimumThreshold: 0.5
   _radius: 1
   _multiplier: 1
+  _deformationSpeed: 10

@@ -12,10 +12,10 @@ namespace Refresher
         {
             _timer += Time.deltaTime;
 
-            if (_timer >= _delay)
-            {
-                Refresh();
-            }
+            if (!(_timer >= _delay)) 
+                return;
+            Refresh();
+            _timer = 0;
         }
     }
 }

@@ -1,74 +1,46 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Deformation;
 using Settings;
+using Unity.Collections;
 using UnityEngine;
 
-public class Damager : MonoBehaviour, IInitializable<IList<IDeformable>, IDamagerSettings>
+public class Damager : MonoBehaviour, IInitializable<IList<MeshFilter>, IDamagerSettings>
 {
-    private IList<IDeformable> _deformables;
-    private Transform _direction; 
+    private IList<MeshFilter> _filters;
     private IDamagerSettings _settings;
 
-    private void Awake()
-    {
-        _direction = new GameObject("Direction").transform;
-        _direction.SetParent(transform, false);
-    }
-
-    public void Initialize(IList<IDeformable> deformables, IDamagerSettings settings)
+    public void Initialize(IList<MeshFilter> filters, IDamagerSettings settings)
     {
         _settings = settings;
-        _deformables = deformables;
+        _filters = filters;
     }
     
-    public void Change(ContactPoint contact, float impulse)
+    public void Damage(ContactPoint contact, float impulse, MeshVertices[] temporaryVertices)
     {
-        var vertices = Array.Empty<Vector3>();
-        foreach (var deformable in _deformables)
+        for (var i = 0; i < _filters.Count; i++)
         {
-            vertices = deformable.Filter.mesh.vertices;
-            var filter = deformable.Filter;
-            var distance = Vector3.Distance(FindClosestVertex(contact, vertices), contact.point);
-            _direction.rotation = Quaternion.FromToRotation(Vector3.forward, contact.normal);
-            if (!(distance <= _settings.Radius))
-                continue;
-            var point = filter.transform.InverseTransformPoint(contact.point);
-            for (var i = 0; i < vertices.Length; i++)
+            var vertices = temporaryVertices[i].Vertices;
+            var point = _filters[i].transform.InverseTransformPoint(contact.point);
+            
+            for (var j = 0; j < vertices.Length; j++)
             {
-                distance = (point - vertices[i]).magnitude;
-                if (distance <= _settings.Radius)
-                {
-                    // Уменьшаем урон мере увеличения расстояния от точки столкновения
-                    impulse -= impulse * Mathf.Clamp01(distance / _settings.Radius);
-                    
-                    _direction.position = filter.transform.TransformPoint(vertices[i]) +
-                                          _direction.forward * impulse * (_settings.Multiplier / 10f);
-                    
-                    vertices[i] = filter.transform.InverseTransformPoint(_direction.position);
-                }
+                var distance = Vector3.Distance(point, vertices[j]);
+                if (!(distance <= _settings.Radius))
+                    continue;
+                var pulse = impulse;
+                // Уменьшаем урон по мере увеличения расстояния от точки столкновения
+                pulse -= pulse * Mathf.Clamp01(distance / _settings.Radius);
+                
+                var rotation = Quaternion.FromToRotation(Vector3.forward, contact.normal) * Vector3.forward;
+                
+                var position = _filters[i].transform.TransformPoint(vertices[j]);
+                
+                position += (rotation * _settings.Multiplier * pulse) / 10f ;
+                
+                vertices[j] = _filters[i].transform.InverseTransformPoint(position);
             }
-            filter.mesh.SetVertices(vertices);
-            filter.mesh.MarkDynamic();
-            filter.mesh.RecalculateBounds();
-            filter.mesh.RecalculateNormals();
         }
-    }
-
-    private static Vector3 FindClosestVertex(ContactPoint contact, IEnumerable<Vector3> vertices)
-    {
-        var closestPoint = Vector3.zero;
-        var closestDistance = float.MaxValue;
-
-        foreach (var vertex in vertices)
-        {
-            var distance = Vector3.Distance(vertex, contact.point);
-            if (!(distance < closestDistance)) 
-                continue;
-            closestDistance = distance;
-            closestPoint = vertex;
-        }
-
-        return closestPoint;
     }
 }

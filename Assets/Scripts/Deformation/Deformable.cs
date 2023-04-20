@@ -13,7 +13,6 @@ namespace Deformation
         private MeshVertices _vertices;
         public MeshVertices InitialVertices { get; private set; }
         public MeshFilter Filter { get; private set; }
-        public MeshCollider Collider { get; private set; }
 
         public event Action<Collision> Entered;
 
@@ -21,10 +20,7 @@ namespace Deformation
         {
             _detector = GetComponent<IDetector<Collision>>();
             Filter = GetComponent<MeshFilter>();
-            Collider = GetComponent<MeshCollider>();
-            //TODO вынести возможно куда-то это
             Filter.sharedMesh = Instantiate(Filter.mesh);
-            Collider.sharedMesh = Filter.sharedMesh;
             InitialVertices = new MeshVertices(Filter.mesh.vertices);
         }
 

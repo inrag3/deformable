@@ -9,13 +9,13 @@ namespace Refresher
         [SerializeField] private MeshColliderCookingOptions _cookingOptions = ~MeshColliderCookingOptions.None;
         private MeshCollider _collider;
         private MeshFilter _filter;
-        
+
         private void Awake()
         {
             _filter = GetComponent<MeshFilter>();
             _collider = GetComponent<MeshCollider>();
         }
-        
+
         protected abstract void LateUpdate();
 
         protected void Refresh()
