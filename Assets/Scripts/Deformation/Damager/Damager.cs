@@ -8,8 +8,8 @@ using UnityEngine;
 
 public class Damager : MonoBehaviour, IInitializable<IList<MeshFilter>, IDamagerSettings>
 {
-    private IList<MeshFilter> _filters;
-    private IDamagerSettings _settings;
+    protected IList<MeshFilter> _filters;
+    protected IDamagerSettings _settings;
 
     public void Initialize(IList<MeshFilter> filters, IDamagerSettings settings)
     {
@@ -17,7 +17,7 @@ public class Damager : MonoBehaviour, IInitializable<IList<MeshFilter>, IDamager
         _filters = filters;
     }
     
-    public void Damage(ContactPoint contact, float impulse, MeshVertices[] temporaryVertices)
+    public virtual void Damage(ContactPoint contact, float impulse, MeshVertices[] temporaryVertices)
     {
         for (var i = 0; i < _filters.Count; i++)
         {

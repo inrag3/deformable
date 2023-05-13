@@ -7,7 +7,6 @@ using UnityEngine;
 
 namespace Deformation
 {
-    [RequireComponent(typeof(Damager))]
     [DisallowMultipleComponent]
     public class Deformer : MonoBehaviour
     {

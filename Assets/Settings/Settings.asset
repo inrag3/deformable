@@ -16,4 +16,4 @@ MonoBehaviour:
   _impulseMinimumThreshold: 0.5
   _radius: 1
   _multiplier: 1
-  _deformationSpeed: 10
+  _deformationSpeed: 50
