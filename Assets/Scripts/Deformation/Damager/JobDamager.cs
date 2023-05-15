@@ -20,7 +20,6 @@ public class JobDamager : Damager
             transformMatrices[i] = _filters[i].transform.localToWorldMatrix;
             nativeVertices[i] = new NativeArray<Vector3>(temporaryVertices[i].Vertices, Allocator.Persistent);
         }
-
         for (var i = 0; i < temporaryVertices.Length; i++)
         {
             results[i] = new NativeArray<Vector3>(temporaryVertices[i].Vertices.Length, Allocator.Persistent);
@@ -56,7 +55,7 @@ public class JobDamager : Damager
             nativeVertices[i].Dispose();
             results[i].Dispose();
         }
-
+        
         damageJobHandles.Dispose();
     }
 }

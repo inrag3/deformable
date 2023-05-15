@@ -49,7 +49,6 @@ namespace Deformation
 
         private void OnEntered(Collision collision)
         {
-          
             var impulse = collision.impulse.magnitude / 100f;
             impulse = Mathf.Clamp(impulse, 0f, _settings.ImpulseMaximumThreshold);
             if (impulse < _settings.ImpulseMinimumThreshold)
