@@ -10,6 +10,7 @@ public class Damager : MonoBehaviour, IInitializable<IList<MeshFilter>, IDamager
 {
     protected IList<MeshFilter> _filters;
     protected IDamagerSettings _settings;
+    private Vector3 _rotation;
 
     public void Initialize(IList<MeshFilter> filters, IDamagerSettings settings)
     {
@@ -33,11 +34,9 @@ public class Damager : MonoBehaviour, IInitializable<IList<MeshFilter>, IDamager
                 // Уменьшаем урон по мере увеличения расстояния от точки столкновения
                 pulse -= pulse * Mathf.Clamp01(distance / _settings.Radius);
                 
-                var rotation = Quaternion.FromToRotation(Vector3.forward, contact.normal) * Vector3.forward;
-                
                 var position = _filters[i].transform.TransformPoint(vertices[j]);
                 
-                position += (rotation * _settings.Multiplier * pulse) / 10f ;
+                position += (contact.normal * _settings.Multiplier * pulse) / 10f ;
                 
                 vertices[j] = _filters[i].transform.InverseTransformPoint(position);
             }

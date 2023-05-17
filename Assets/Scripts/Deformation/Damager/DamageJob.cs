@@ -28,12 +28,10 @@ public struct DamageJob : IJob
 
             var pulse = Impulse;
             pulse -= pulse * Mathf.Clamp01(distance / Radius);
-
-            var rotation = Quaternion.FromToRotation(Vector3.forward, Contact.normal) * Vector3.forward;
             
             var position = TransformMatrix.MultiplyPoint(Vertices[j]);;
  
-            position += (rotation * Multiplier * pulse) / 10f;
+            position += (Contact.normal * Multiplier * pulse) / 10f;
 
             Results[j] = TransformMatrix.inverse.MultiplyPoint(position);
         }
